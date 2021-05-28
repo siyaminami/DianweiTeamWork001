@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class MouseControlModel : MonoBehaviour
 {
-    Vector3 cubeScreenPos;
-    Vector3 offset;
+    public Camera cam;//发射射线的摄像机
+    private GameObject go;//射线碰撞的物体
+    public static string btnName;//射线碰撞物体的名字
+    private Vector3 screenSpace;
+    private Vector3 offset;
+    private bool isDrage = false;
+
+
     void Start()
     {
+        
         //隐藏或者显示物体
         //transform.gameObject.SetActive(true);
     }
@@ -41,25 +48,42 @@ public class MouseControlModel : MonoBehaviour
                 Camera.main.orthographicSize -= 0.5F;
         }
 
-        cubeScreenPos = Camera.main.WorldToScreenPoint(transform.position);
-
-        //2. 计算偏移量
-        //鼠标的三维坐标
-        Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, cubeScreenPos.z);
-        //鼠标三维坐标转为世界坐标
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-        offset = transform.position - mousePos;
-
-        //3. 物体随着鼠标移动
-        while (Input.GetMouseButton(0))
+        //整体初始位置 
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        //从摄像机发出到点击坐标的射线
+        RaycastHit hitInfo;
+        if (isDrage == false)
         {
-            //目前的鼠标二维坐标转为三维坐标
-            Vector3 curMousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, cubeScreenPos.z);
-            //目前的鼠标三维坐标转为世界坐标
-            curMousePos = Camera.main.ScreenToWorldPoint(curMousePos);
-
-            //物体世界位置
-            transform.position = curMousePos + offset;
+            if (Physics.Raycast(ray, out hitInfo))
+            {
+                //划出射线，只有在scene视图中才能看到
+                Debug.DrawLine(ray.origin, hitInfo.point);
+                go = hitInfo.collider.gameObject;
+                //print(btnName);
+                screenSpace = cam.WorldToScreenPoint(go.transform.position);
+                offset = go.transform.position - cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenSpace.z));
+                //物体的名字  
+                btnName = go.name;
+                //组件的名字
+            }
+            else
+            {
+                btnName = null;
+            }
+        }
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 currentScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenSpace.z);
+            Vector3 currentPosition = cam.ScreenToWorldPoint(currentScreenSpace) + offset;
+            if (btnName != null)
+            {
+                go.transform.position = currentPosition;
+            }
+            isDrage = true;
+        }
+        else
+        {
+            isDrage = false;
         }
     }
 }

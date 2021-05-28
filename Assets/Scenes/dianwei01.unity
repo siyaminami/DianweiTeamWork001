@@ -458,7 +458,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b52bc6beb29b14789d650dc05b7a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yMinLimit: -20
-  yMaxLimit: 80
-  xSpeed: 250
-  ySpeed: 120
+  cam: {fileID: 2032772692}
+--- !u!65 &919132149049330706
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149049330701}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.204824, y: 1.2260002, z: 1.4727194}
+  m_Center: {x: 0.11451474, y: -0.03068263, z: 0.7333596}
